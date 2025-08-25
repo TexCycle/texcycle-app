@@ -179,11 +179,7 @@ class _SignInPageState extends State<SignInPage> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      onPressed: () {
-                        if (formKey.currentState?.validate() ?? false) {
-                          context.go('/role');
-                        }
-                      },
+                      onPressed: () => context.go('/map'),
                       child: const Text(
                         'Entrar',
                         style: TextStyle(fontWeight: FontWeight.w700),

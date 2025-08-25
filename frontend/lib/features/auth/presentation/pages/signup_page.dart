@@ -290,14 +290,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                 ),
-                                onPressed: (!termosAceitos)
-                                    ? null
-                                    : () {
-                                        if (formKey.currentState?.validate() ??
-                                            false) {
-                                          context.go('/role');
-                                        }
-                                      },
+                                onPressed: () => context.go('/map'),
                                 child: const Text(
                                   'Criar conta',
                                   style: TextStyle(fontWeight: FontWeight.w700),
