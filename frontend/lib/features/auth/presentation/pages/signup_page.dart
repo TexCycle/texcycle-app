@@ -50,16 +50,13 @@ class _SignUpPageState extends State<SignUpPage> {
             return SingleChildScrollView(
               padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
               child: ConstrainedBox(
-                // 100% da altura disponível (SafeArea já desconta status bar/notch)
                 constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                // Centraliza vertical e horizontalmente quando houver espaço
                 child: Center(
                   child: ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 520),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        // ------- Header -------
                         Container(
                           width: double.infinity,
                           padding: const EdgeInsets.symmetric(
@@ -110,7 +107,6 @@ class _SignUpPageState extends State<SignUpPage> {
                         ),
                         const SizedBox(height: 16),
 
-                        // ------- Form -------
                         Card(
                           elevation: 2,
                           shape: RoundedRectangleBorder(
@@ -249,7 +245,6 @@ class _SignUpPageState extends State<SignUpPage> {
 
                         const SizedBox(height: 16),
 
-                        // ------- Ações -------
                         Row(
                           children: [
                             Expanded(
