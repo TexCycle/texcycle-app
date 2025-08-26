@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/shared/widgets/app_bottom_nav.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../core/config/app_colors.dart';
 
@@ -107,38 +108,7 @@ class _AccountPageState extends State<AccountPage> {
         ),
       ),
 
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: (i) {
-          setState(() => _currentIndex = i);
-          if (i == 0) context.go('/map');
-          if (i == 1) context.go('/services');
-          if (i == 2) context.go('/activity');
-          if (i == 3) context.go('/account');
-        },
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: AppColors.navy,
-        unselectedItemColor: Colors.black54,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            activeIcon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.grid_view_outlined),
-            label: 'Serviços',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.receipt_long_outlined),
-            label: 'Atividades',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
-            label: 'Conta',
-          ),
-        ],
-      ),
+      bottomNavigationBar: AppBottomNavBar(currentIndex: _currentIndex),
     );
   }
 

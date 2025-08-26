@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:frontend/shared/widgets/app_bottom_nav.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -150,7 +151,6 @@ class _MapPageState extends State<MapPage> {
               ),
             ),
 
-
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(0, 12, 0, 0),
@@ -209,57 +209,7 @@ class _MapPageState extends State<MapPage> {
         ),
       ),
 
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: (i) {
-          setState(() => _currentIndex = i);
-          switch (i) {
-            case 0:
-              context.go('/map');
-              break;
-            // case 1:
-            //   context.go('/services'); 
-            //   break;
-            // case 2:
-            //   context.go('/activities'); 
-            //   break;
-            case 3:
-              context.go('/myaccount'); 
-              break;
-          }
-        },
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: AppColors.navy,
-        unselectedItemColor: Colors.black54,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Padding(padding: EdgeInsets.only(top: 8),
-            child: Icon(Icons.home_outlined),
-            ),
-            
-            activeIcon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Padding(padding: EdgeInsets.only(top: 8),
-            child: Icon(Icons.grid_view_outlined),
-            ),
-            label: 'Serviços',
-          ),
-          BottomNavigationBarItem(
-            icon: Padding(padding: EdgeInsets.only(top: 8),
-            child: Icon(Icons.receipt_long_outlined),
-            ),
-            label: 'Atividades',
-          ),
-          BottomNavigationBarItem(
-            icon: Padding(padding: EdgeInsets.only(top: 8),
-            child: Icon(Icons.person_outline),
-            ),
-            label: 'Conta',
-          ),
-        ],
-      ),
+      bottomNavigationBar: AppBottomNavBar(currentIndex: _currentIndex),
     );
   }
 }
