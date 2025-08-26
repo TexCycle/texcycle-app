@@ -85,12 +85,10 @@ class _MapPageState extends State<MapPage> {
       body: SafeArea(
         child: Column(
           children: [
-            // --------- HEADER (branco) ----------
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
               child: Row(
                 children: [
-                  // pill de busca
                   Expanded(
                     child: Container(
                       height: 48,
@@ -152,9 +150,7 @@ class _MapPageState extends State<MapPage> {
               ),
             ),
 
-            // --------- MAPA (não ocupa a tela toda) ----------
-            // Usa Expanded para preencher o espaço ENTRE header e footer.
-            // Envolvido num card com bordas arredondadas.
+
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(0, 12, 0, 0),
@@ -185,7 +181,6 @@ class _MapPageState extends State<MapPage> {
                         ],
                       ),
 
-                      // botão "minha localização" dentro do card do mapa
                       Positioned(
                         right: 12,
                         bottom: 12,
@@ -214,11 +209,24 @@ class _MapPageState extends State<MapPage> {
         ),
       ),
 
-      // --------- FOOTER (sempre no final da tela) ----------
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: (i) {
-          /* ... */
+          setState(() => _currentIndex = i);
+          switch (i) {
+            case 0:
+              context.go('/map');
+              break;
+            // case 1:
+            //   context.go('/services'); 
+            //   break;
+            // case 2:
+            //   context.go('/activities'); 
+            //   break;
+            case 3:
+              context.go('/myaccount'); 
+              break;
+          }
         },
         type: BottomNavigationBarType.fixed,
         selectedItemColor: AppColors.navy,
