@@ -8,14 +8,14 @@ import 'package:go_router/go_router.dart';
 import '../../features/auth/presentation/pages/signup_page.dart';
 
 GoRouter buildRouter() => GoRouter(
-  initialLocation: '/donorinfo',
+  initialLocation: '/donor-info',
   routes: [
-    GoRoute(path: '/signup', builder: (_, __) => const SignUpPage()),
-    GoRoute(path: '/signin', builder: (_, __) => const SignInPage()),
+    GoRoute(path: '/sign-up', builder: (_, __) => const SignUpPage()),
+    GoRoute(path: '/sign-in', builder: (_, __) => const SignInPage()),
     GoRoute(path: '/map', builder: (_, __) => const MapPage()),
     GoRoute(path: '/chat', builder: (_, __) => const ChatPage()),
-    GoRoute(path: '/myaccount', builder: (_, __) => const AccountPage()),
-    GoRoute(path: '/donorinfo', builder: (_, __) => const DonorInfoPage()),
+    GoRoute(path: '/my-account', builder: (_, __) => const AccountPage()),
+    GoRoute(path: '/donor-info', builder: (_, __) => const DonorInfoPage()),
   ],
   errorBuilder: (_, state) => Scaffold(
     appBar: AppBar(title: const Text('Ops')),

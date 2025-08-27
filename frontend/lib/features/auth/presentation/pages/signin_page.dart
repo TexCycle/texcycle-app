@@ -161,7 +161,7 @@ class _SignInPageState extends State<SignInPage> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      onPressed: () => context.go('/signup'),
+                      onPressed: () => context.go('/sign-up'),
                       child: const Text(
                         'Criar conta',
                         style: TextStyle(fontWeight: FontWeight.w600),
