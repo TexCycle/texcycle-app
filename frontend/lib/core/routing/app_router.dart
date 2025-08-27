@@ -8,7 +8,7 @@ import 'package:go_router/go_router.dart';
 import '../../features/auth/presentation/pages/signup_page.dart';
 
 GoRouter buildRouter() => GoRouter(
-  initialLocation: '/donor-info',
+  initialLocation: '/sign-up',
   routes: [
     GoRoute(path: '/sign-up', builder: (_, __) => const SignUpPage()),
     GoRoute(path: '/sign-in', builder: (_, __) => const SignInPage()),
