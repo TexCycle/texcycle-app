@@ -322,7 +322,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         ),
                         const SizedBox(height: 8),
                         TextButton(
-                          onPressed: () => context.go('/signin'),
+                          onPressed: () => context.go('/sign-in'),
                           child: const Text("Já tem uma conta? Faça login"),
                         ),
                       ],

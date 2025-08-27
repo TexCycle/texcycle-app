@@ -94,7 +94,7 @@ class _AccountPageState extends State<AccountPage> {
                   ),
                 ),
                 onPressed: () {
-                  context.go('/signin');
+                  context.go('/sign-in');
                 },
                 icon: const Icon(Icons.exit_to_app),
                 label: const Text(
