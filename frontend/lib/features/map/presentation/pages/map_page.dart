@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:frontend/shared/widgets/app_bottom_nav.dart';
+import 'package:frontend/shared/widgets/search_header.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -79,75 +80,41 @@ class _MapPageState extends State<MapPage> {
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-
     return Scaffold(
       backgroundColor: Colors.white,
+
       body: SafeArea(
         child: Column(
           children: [
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Container(
-                      height: 48,
-                      padding: const EdgeInsets.symmetric(horizontal: 14),
-                      decoration: BoxDecoration(
-                        color: AppColors.navy,
-                        borderRadius: BorderRadius.circular(28),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(.08),
-                            blurRadius: 8,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
+              child: SearchHeader(
+                placeholder: 'Para onde?',
+                onTap: () {
+                  // TODO: abrir busca
+                },
+                trailing: Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: AppColors.navy,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(.08),
+                        blurRadius: 8,
+                        offset: const Offset(0, 4),
                       ),
-                      child: Row(
-                        children: const [
-                          Icon(Icons.search, color: Colors.white),
-                          SizedBox(width: 10),
-                          Expanded(
-                            child: Text(
-                              'Para onde?',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w600,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                    ],
                   ),
-                  const SizedBox(width: 12),
-                  // avatar
-                  Container(
-                    width: 48,
-                    height: 48,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(.08),
-                          blurRadius: 8,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: IconButton(
-                      onPressed: () {
-                        /* TODO: perfil */
-                      },
-                      icon: Icon(Icons.person_outline, color: AppColors.navy),
-                      tooltip: 'Perfil',
-                    ),
+                  child: IconButton(
+                    onPressed: () {
+                      // TODO: perfil
+                    },
+                    icon: const Icon(Icons.person_outline, color: Colors.white),
+                    tooltip: 'Perfil',
                   ),
-                ],
+                ),
               ),
             ),
 
