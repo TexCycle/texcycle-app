@@ -21,6 +21,8 @@ class _SignUpPageState extends State<SignUpPage> {
   bool termosAceitos = false;
   bool obscure = true;
 
+  String? tipoConta;
+
   @override
   void dispose() {
     nomeCtrl.dispose();
@@ -118,6 +120,8 @@ class _SignUpPageState extends State<SignUpPage> {
                               key: formKey,
                               child: Column(
                                 children: [
+                                  const SizedBox(height: 12),
+
                                   TextFormField(
                                     controller: nomeCtrl,
                                     decoration: _dec(
@@ -134,7 +138,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                     controller: cpfCtrl,
                                     keyboardType: TextInputType.number,
                                     decoration: _dec(
-                                      'CPF',
+                                      'CPF/CNPJ',
                                       icon: Icons.credit_card_outlined,
                                     ),
                                   ),
@@ -174,6 +178,29 @@ class _SignUpPageState extends State<SignUpPage> {
                                     ),
                                   ),
                                   const SizedBox(height: 12),
+                                  DropdownButtonFormField<String>(
+                                    value: tipoConta,
+                                    decoration: _dec(
+                                      'Quem sou eu',
+                                      icon: Icons.people_outline,
+                                    ),
+                                    items: const [
+                                      DropdownMenuItem(
+                                        value: 'Doador',
+                                        child: Text('Doador'),
+                                      ),
+                                      DropdownMenuItem(
+                                        value: 'Coletador',
+                                        child: Text('Coletador'),
+                                      ),
+                                    ],
+                                    onChanged: (v) =>
+                                        setState(() => tipoConta = v),
+                                    validator: (v) => v == null
+                                        ? 'Selecione uma opção'
+                                        : null,
+                                  ),
+                                  const SizedBox(height: 12),
                                   TextFormField(
                                     controller: senhaCtrl,
                                     obscureText: obscure,
@@ -199,15 +226,14 @@ class _SignUpPageState extends State<SignUpPage> {
                                         : null,
                                   ),
                                   const SizedBox(height: 8),
+
                                   Row(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.center,
                                     children: [
                                       Checkbox(
                                         value: termosAceitos,
-                                        activeColor: Theme.of(
-                                          context,
-                                        ).colorScheme.primary,
+                                        activeColor: cs.primary,
                                         onChanged: (v) => setState(
                                           () => termosAceitos = v ?? false,
                                         ),
@@ -244,7 +270,6 @@ class _SignUpPageState extends State<SignUpPage> {
                         ),
 
                         const SizedBox(height: 16),
-
                         Row(
                           children: [
                             Expanded(
@@ -254,9 +279,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                     vertical: 14,
                                   ),
                                   side: BorderSide(
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.primary,
+                                    color: cs.primary,
                                     width: 1.4,
                                   ),
                                   shape: RoundedRectangleBorder(
@@ -274,9 +297,7 @@ class _SignUpPageState extends State<SignUpPage> {
                             Expanded(
                               child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: Theme.of(
-                                    context,
-                                  ).colorScheme.primary,
+                                  backgroundColor: cs.primary,
                                   foregroundColor: Colors.white,
                                   padding: const EdgeInsets.symmetric(
                                     vertical: 14,
@@ -285,7 +306,12 @@ class _SignUpPageState extends State<SignUpPage> {
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                 ),
-                                onPressed: () => context.go('/map'),
+                                onPressed: () {
+                                  if (formKey.currentState?.validate() ??
+                                      false) {
+                                    context.go('/map');
+                                  }
+                                },
                                 child: const Text(
                                   'Criar conta',
                                   style: TextStyle(fontWeight: FontWeight.w700),
