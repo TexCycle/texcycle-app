@@ -56,10 +56,12 @@ class _ChatListPageState extends State<ChatListPage> {
                       chat["lastMsg"],
                       style: const TextStyle(color: AppColors.textSecondary),
                     ),
-                    trailing: const Icon(Icons.chevron_right,
-                        color: Colors.grey),
+                    trailing: const Icon(
+                      Icons.chevron_right,
+                      color: Colors.grey,
+                    ),
                     onTap: () {
-                       context.go('/chat');
+                      context.go('/chat');
                     },
                   );
                 },

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/core/config/user_session.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/config/app_colors.dart';
 
@@ -9,6 +10,8 @@ class AppBottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final role = UserSession.role; 
+
     return BottomNavigationBar(
       currentIndex: currentIndex,
       onTap: (i) {
@@ -20,7 +23,11 @@ class AppBottomNavBar extends StatelessWidget {
             context.go('/services');
             break;
           case 2:
-            context.go('/collector');
+            if (role == "coletador") {
+              context.go('/collector');
+            } else {
+              context.go('/donor-info');
+            }
             break;
           case 3:
             context.go('/my-account');
