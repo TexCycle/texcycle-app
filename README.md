@@ -1,93 +1,83 @@
 # TexCycle Frontend
 
-TexCycle é um aplicativo desenvolvido em **Flutter** com o objetivo de conectar doadores e coletores de materiais têxteis.  
-O projeto foi estruturado para manter escalabilidade, reutilização de componentes e facilidade de manutenção.
+Frontend do projeto **TexCycle**, desenvolvido em **Flutter**, responsável pela interface de doadores e coletores no ciclo têxtil.  
+O app possui telas de autenticação, cadastro, mapa interativo, chats, gerenciamento de conta e funcionalidades específicas para cada tipo de usuário (**doador** e **coletador**).
 
 ---
 
-## 📂 Estrutura de Pastas
+## 📂 Estrutura do Projeto
 
 ```
 lib/
 ├── core/
 │   ├── config/
-│   │   ├── app_colors.dart       # Paleta de cores
-│   │   ├── theme.dart            # Tema global do app
-│   │   ├── router.dart           # Definições de rotas (go_router)
-│   │   └── user_session.dart     # Sessão do usuário (role: coletador/doador)
+│   │   ├── app_colors.dart        # Definição da paleta de cores
+│   │   ├── theme.dart             # Tema global do aplicativo
+│   │   ├── user_session.dart      # Sessão do usuário (ex: role coletador/doador)
+│   │
+│   └── routing/
+│       └── app_router.dart        # Definição das rotas com GoRouter
 │
 ├── features/
-│   ├── auth/
-│   │   ├── presentation/
-│   │   │   ├── pages/
-│   │   │   │   ├── sign_in_page.dart
-│   │   │   │   └── sign_up_page.dart
-│   │   │   └── widgets/          # Widgets específicos de autenticação
-│   │
-│   ├── map/
+│   ├── account/
 │   │   └── presentation/
-│   │       └── pages/
-│   │           └── map_page.dart
+│   │       └── account_page.dart  # Tela de "Minha Conta"
+│   │
+│   ├── auth/                      # (login e cadastro futuramente)
 │   │
 │   ├── chat/
 │   │   └── presentation/
-│   │       ├── pages/
-│   │       │   ├── chat_list_page.dart
-│   │       │   └── chat_page.dart
-│   │       └── widgets/          # Componentes de chat
-│   │
-│   ├── account/
-│   │   └── presentation/
-│   │       └── pages/
-│   │           └── account_page.dart
-│   │
-│   ├── donor/
-│   │   └── presentation/
-│   │       └── pages/
-│   │           └── donor_info_page.dart
+│   │       ├── chat_list_page.dart # Lista de conversas
+│   │       └── chat_page.dart      # Tela de chat individual
 │   │
 │   ├── collector/
 │   │   └── presentation/
-│   │       └── pages/
-│   │           └── collector_page.dart
+│   │       └── collector_page.dart # Tela de coletas disponíveis/histórico
 │   │
-│   └── services/
+│   ├── donor/
+│   │   └── presentation/
+│   │       └── donor_info_page.dart # Cadastro de doações (materiais têxteis)
+│   │
+│   └── map/
 │       └── presentation/
-│           └── pages/
-│               └── services_page.dart
+│           └── map_page.dart      # Tela principal com mapa interativo
 │
-└── shared/
-    └── widgets/
-        ├── app_bottom_nav.dart   # BottomNavigationBar reutilizável
-        └── app_search_header.dart# Header reutilizável
+├── shared/
+│   └── widgets/
+│       ├── app_bottom_nav.dart    # Bottom navigation bar reutilizável
+│       ├── app_button.dart        # Botão customizado
+│       └── search_header.dart     # Header de busca reutilizável
+│
+├── app.dart                       # Inicialização principal
+└── main.dart                      # Entry point do Flutter
 ```
 
 ---
 
-## ✨ Funcionalidades
+## 🚀 Tecnologias Utilizadas
 
-- **Autenticação**: Cadastro e login de usuários (doador ou coletador).
-- **Mapa**: Visualização interativa (OpenStreetMap) com pins e localização do usuário.
-- **Doações**: Cadastro de materiais têxteis (tipo, quantidade, peso, endereço).
-- **Coletas**: Lista de doações disponíveis para coletores e histórico de coletas realizadas.
-- **Chat**: Conversa entre doadores e coletores.
-- **Minha Conta**: Visualização dos dados de perfil e logout.
-- **Navegação Reutilizável**: `AppBottomNavBar` configurada dinamicamente conforme o role do usuário.
-- **Header Reutilizável**: `AppSearchHeader` usado em múltiplas telas.
+- **Flutter** (Framework principal)
+- **GoRouter** (Gerenciamento de rotas)
+- **Flutter Map + OpenStreetMap** (Mapa interativo sem necessidade de API Key)
+- **Geolocator** (Geolocalização do usuário)
+- **Arquitetura Modular** (Divisão clara entre `core`, `features` e `shared`)
 
 ---
 
-## 🚀 Tecnologias
+## 📱 Funcionalidades Atuais
 
-- [Flutter](https://flutter.dev/)  
-- [Dart](https://dart.dev/)  
-- [go_router](https://pub.dev/packages/go_router) - Navegação  
-- [flutter_map](https://pub.dev/packages/flutter_map) - Integração com mapas  
-- [geolocator](https://pub.dev/packages/geolocator) - Localização do usuário  
+- Cadastro de usuários (**doador** e **coletador**)
+- Login e redirecionamento para rotas diferentes por tipo de usuário
+- Mapa interativo com markers e localização do usuário
+- Cadastro de doações de materiais têxteis (tipo, quantidade, peso, endereço)
+- Listagem de coletas disponíveis para coletores + histórico de coletas
+- Chat individual + lista de chats
+- Página de conta com dados do usuário
+- Navegação inferior reutilizável (**BottomNav**)
 
 ---
 
-## ▶️ Executando o Projeto
+## ▶️ Como Rodar o Projeto
 
 1. Clone este repositório:
    ```bash
@@ -100,42 +90,22 @@ lib/
    flutter pub get
    ```
 
-3. Execute o app:
+3. Rode o app:
    ```bash
    flutter run
    ```
 
 ---
 
-## 🧩 Rotas Principais
+## 🔮 Próximos Passos
 
-- `/signin` → Tela de login  
-- `/signup` → Tela de cadastro  
-- `/map` → Tela do mapa  
-- `/donor-info` → Cadastro de doação  
-- `/collector` → Página de coletas (com histórico e ativas)  
-- `/chat-list` → Lista de chats  
-- `/chat/:id` → Conversa individual  
-- `/my-account` → Perfil do usuário  
+- Integração com backend (API REST/GraphQL)
+- Autenticação real (login/cadastro persistente)
+- Integração com Firebase ou outro sistema de notificações
+- Melhorias no sistema de chat (tempo real)
 
 ---
 
-## 👥 Papéis
+## 👥 Autores
 
-- **Doador**: cadastra materiais têxteis para coleta.  
-- **Coletador**: visualiza e aceita coletas disponíveis, além de acompanhar seu histórico.  
-
----
-
-## 📌 Próximos Passos
-
-- Integração com backend (API REST ou Firebase).  
-- Autenticação real de usuários.  
-- Persistência de dados de doações e coletas.  
-- Notificações push para novas mensagens e coletas.  
-
----
-
-## 📄 Licença
-
-Este projeto é apenas para fins educacionais e de prototipação.  
+Projeto desenvolvido por **Eduardo Farias Camargo** e colaboradores.  
