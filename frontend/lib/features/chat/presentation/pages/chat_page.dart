@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/shared/widgets/app_bottom_nav.dart';
 import '../../../../../core/config/app_colors.dart';
 
 class ChatPage extends StatefulWidget {
@@ -10,6 +11,7 @@ class ChatPage extends StatefulWidget {
 
 class _ChatPageState extends State<ChatPage> {
   final TextEditingController _msgCtrl = TextEditingController();
+  int _currentIndex = 1;
 
   final List<Map<String, dynamic>> _messages = [
     {"text": "Olá, tudo bem?", "isMe": false},
@@ -31,6 +33,7 @@ class _ChatPageState extends State<ChatPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFE5E5E5),
+
       body: Column(
         children: [
           SafeArea(
@@ -155,6 +158,8 @@ class _ChatPageState extends State<ChatPage> {
           ),
         ],
       ),
+
+      bottomNavigationBar: AppBottomNavBar(currentIndex: _currentIndex),
     );
   }
 }

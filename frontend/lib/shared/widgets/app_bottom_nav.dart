@@ -20,7 +20,7 @@ class AppBottomNavBar extends StatelessWidget {
             context.go('/services');
             break;
           case 2:
-            context.go('/activities');
+            context.go('/collector');
             break;
           case 3:
             context.go('/my-account');

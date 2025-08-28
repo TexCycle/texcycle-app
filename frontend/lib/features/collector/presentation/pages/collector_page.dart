@@ -10,7 +10,7 @@ class CollectorPage extends StatefulWidget {
 }
 
 class _CollectorPageState extends State<CollectorPage> {
-  int _currentIndex = 0;
+  int _currentIndex = 2;
   String _status = "Todos";
 
   final List<Map<String, String>> _coletasDisponiveis = [
