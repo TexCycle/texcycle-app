@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../core/config/app_colors.dart';
+import '../../../../../shared/widgets/app_loading.dart'; 
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -20,6 +21,7 @@ class _SignUpPageState extends State<SignUpPage> {
   final formKey = GlobalKey<FormState>();
   bool termosAceitos = false;
   bool obscure = true;
+  bool _loading = false; 
 
   String? tipoConta;
 
@@ -41,299 +43,323 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
+  Future<void> _onSubmit() async {
+    if (!(formKey.currentState?.validate() ?? false)) return;
+
+    setState(() => _loading = true);
+
+    await Future.delayed(const Duration(seconds: 2));
+
+    if (mounted) {
+      setState(() => _loading = false);
+      context.go('/map');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
 
-    return Scaffold(
-      body: SafeArea(
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            return SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
-              child: ConstrainedBox(
-                constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                child: Center(
+    return Stack(
+      children: [
+        Scaffold(
+          body: SafeArea(
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                return SingleChildScrollView(
+                  padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
                   child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 520),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 18,
-                          ),
-                          decoration: BoxDecoration(
-                            color: AppColors.navy,
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          child: Row(
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.all(10),
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(.1),
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: const Icon(
-                                  Icons.person_add_alt_1,
-                                  color: Colors.white,
-                                  size: 28,
-                                ),
+                    constraints: BoxConstraints(
+                      minHeight: constraints.maxHeight,
+                    ),
+                    child: Center(
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 520),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 18,
                               ),
-                              const SizedBox(width: 12),
-                              const Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Crie sua conta',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w700,
-                                      ),
-                                    ),
-                                    SizedBox(height: 2),
-                                    Text(
-                                      'Junte-se ao ciclo têxtil e comece a doar ou coletar.',
-                                      style: TextStyle(color: Colors.white70),
-                                    ),
-                                  ],
-                                ),
+                              decoration: BoxDecoration(
+                                color: AppColors.navy,
+                                borderRadius: BorderRadius.circular(16),
                               ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-
-                        Card(
-                          elevation: 2,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.fromLTRB(16, 18, 16, 8),
-                            child: Form(
-                              key: formKey,
-                              child: Column(
+                              child: Row(
                                 children: [
-                                  const SizedBox(height: 12),
-
-                                  TextFormField(
-                                    controller: nomeCtrl,
-                                    decoration: _dec(
-                                      'Nome completo',
-                                      icon: Icons.badge_outlined,
+                                  Container(
+                                    padding: const EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white.withOpacity(.1),
+                                      borderRadius: BorderRadius.circular(12),
                                     ),
-                                    validator: (v) =>
-                                        (v == null || v.trim().isEmpty)
-                                        ? 'Obrigatório'
-                                        : null,
-                                  ),
-                                  const SizedBox(height: 12),
-                                  TextFormField(
-                                    controller: cpfCtrl,
-                                    keyboardType: TextInputType.number,
-                                    decoration: _dec(
-                                      'CPF/CNPJ',
-                                      icon: Icons.credit_card_outlined,
+                                    child: const Icon(
+                                      Icons.person_add_alt_1,
+                                      color: Colors.white,
+                                      size: 28,
                                     ),
                                   ),
-                                  const SizedBox(height: 12),
-                                  TextFormField(
-                                    controller: emailCtrl,
-                                    keyboardType: TextInputType.emailAddress,
-                                    decoration: _dec(
-                                      'E-mail',
-                                      icon: Icons.alternate_email,
-                                    ),
-                                    validator: (v) {
-                                      if (v == null || v.isEmpty) {
-                                        return 'Obrigatório';
-                                      }
-                                      final ok = RegExp(
-                                        r'^[^@]+@[^@]+\.[^@]+',
-                                      ).hasMatch(v);
-                                      return ok ? null : 'E-mail inválido';
-                                    },
-                                  ),
-                                  const SizedBox(height: 12),
-                                  TextFormField(
-                                    controller: telCtrl,
-                                    keyboardType: TextInputType.phone,
-                                    decoration: _dec(
-                                      'Celular',
-                                      icon: Icons.phone_outlined,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 12),
-                                  TextFormField(
-                                    controller: enderecoCtrl,
-                                    decoration: _dec(
-                                      'Endereço',
-                                      icon: Icons.location_on_outlined,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 12),
-                                  DropdownButtonFormField<String>(
-                                    value: tipoConta,
-                                    decoration: _dec(
-                                      'Quem sou eu',
-                                      icon: Icons.people_outline,
-                                    ),
-                                    items: const [
-                                      DropdownMenuItem(
-                                        value: 'Doador',
-                                        child: Text('Doador'),
-                                      ),
-                                      DropdownMenuItem(
-                                        value: 'Coletador',
-                                        child: Text('Coletador'),
-                                      ),
-                                    ],
-                                    onChanged: (v) =>
-                                        setState(() => tipoConta = v),
-                                    validator: (v) => v == null
-                                        ? 'Selecione uma opção'
-                                        : null,
-                                  ),
-                                  const SizedBox(height: 12),
-                                  TextFormField(
-                                    controller: senhaCtrl,
-                                    obscureText: obscure,
-                                    decoration:
-                                        _dec(
-                                          'Senha',
-                                          icon: Icons.lock_outline,
-                                        ).copyWith(
-                                          suffixIcon: IconButton(
-                                            onPressed: () => setState(
-                                              () => obscure = !obscure,
-                                            ),
-                                            icon: Icon(
-                                              obscure
-                                                  ? Icons.visibility_off
-                                                  : Icons.visibility,
-                                            ),
+                                  const SizedBox(width: 12),
+                                  const Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Crie sua conta',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.w700,
                                           ),
                                         ),
-                                    validator: (v) =>
-                                        (v == null || v.length < 6)
-                                        ? 'Min. 6 caracteres'
-                                        : null,
-                                  ),
-                                  const SizedBox(height: 8),
-
-                                  Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Checkbox(
-                                        value: termosAceitos,
-                                        activeColor: cs.primary,
-                                        onChanged: (v) => setState(
-                                          () => termosAceitos = v ?? false,
+                                        SizedBox(height: 2),
+                                        Text(
+                                          'Junte-se ao ciclo têxtil e comece a doar ou coletar.',
+                                          style: TextStyle(
+                                            color: Colors.white70,
+                                          ),
                                         ),
-                                      ),
-                                      const SizedBox(width: 4),
-                                      const Expanded(
-                                        child: Wrap(
-                                          children: [
-                                            Text('Estou de acordo com os '),
-                                            Text(
-                                              'Termos de Uso',
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.w600,
-                                              ),
-                                            ),
-                                            Text(' e '),
-                                            Text(
-                                              'Política de Privacidade',
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.w600,
-                                              ),
-                                            ),
-                                            Text('.'),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
-                                  const SizedBox(height: 6),
                                 ],
                               ),
                             ),
-                          ),
-                        ),
+                            const SizedBox(height: 16),
 
-                        const SizedBox(height: 16),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: OutlinedButton(
-                                style: OutlinedButton.styleFrom(
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 14,
-                                  ),
-                                  side: BorderSide(
-                                    color: cs.primary,
-                                    width: 1.4,
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
+                            Card(
+                              elevation: 2,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.fromLTRB(
+                                  16,
+                                  18,
+                                  16,
+                                  8,
                                 ),
-                                onPressed: () => context.go('/login'),
-                                child: const Text(
-                                  'Cancelar',
-                                  style: TextStyle(fontWeight: FontWeight.w600),
+                                child: Form(
+                                  key: formKey,
+                                  child: Column(
+                                    children: [
+                                      TextFormField(
+                                        controller: nomeCtrl,
+                                        decoration: _dec(
+                                          'Nome completo',
+                                          icon: Icons.badge_outlined,
+                                        ),
+                                        validator: (v) =>
+                                            (v == null || v.trim().isEmpty)
+                                            ? 'Obrigatório'
+                                            : null,
+                                      ),
+                                      const SizedBox(height: 12),
+                                      TextFormField(
+                                        controller: cpfCtrl,
+                                        keyboardType: TextInputType.number,
+                                        decoration: _dec(
+                                          'CPF/CNPJ',
+                                          icon: Icons.credit_card_outlined,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 12),
+                                      TextFormField(
+                                        controller: emailCtrl,
+                                        keyboardType:
+                                            TextInputType.emailAddress,
+                                        decoration: _dec(
+                                          'E-mail',
+                                          icon: Icons.alternate_email,
+                                        ),
+                                        validator: (v) {
+                                          if (v == null || v.isEmpty)
+                                            return 'Obrigatório';
+                                          final ok = RegExp(
+                                            r'^[^@]+@[^@]+\.[^@]+',
+                                          ).hasMatch(v);
+                                          return ok ? null : 'E-mail inválido';
+                                        },
+                                      ),
+                                      const SizedBox(height: 12),
+                                      TextFormField(
+                                        controller: telCtrl,
+                                        keyboardType: TextInputType.phone,
+                                        decoration: _dec(
+                                          'Celular',
+                                          icon: Icons.phone_outlined,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 12),
+                                      TextFormField(
+                                        controller: enderecoCtrl,
+                                        decoration: _dec(
+                                          'Endereço',
+                                          icon: Icons.location_on_outlined,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 12),
+                                      DropdownButtonFormField<String>(
+                                        value: tipoConta,
+                                        decoration: _dec(
+                                          'Quem sou eu',
+                                          icon: Icons.people_outline,
+                                        ),
+                                        items: const [
+                                          DropdownMenuItem(
+                                            value: 'Doador',
+                                            child: Text('Doador'),
+                                          ),
+                                          DropdownMenuItem(
+                                            value: 'Coletador',
+                                            child: Text('Coletador'),
+                                          ),
+                                        ],
+                                        onChanged: (v) =>
+                                            setState(() => tipoConta = v),
+                                        validator: (v) => v == null
+                                            ? 'Selecione uma opção'
+                                            : null,
+                                      ),
+                                      const SizedBox(height: 12),
+                                      TextFormField(
+                                        controller: senhaCtrl,
+                                        obscureText: obscure,
+                                        decoration:
+                                            _dec(
+                                              'Senha',
+                                              icon: Icons.lock_outline,
+                                            ).copyWith(
+                                              suffixIcon: IconButton(
+                                                onPressed: () => setState(
+                                                  () => obscure = !obscure,
+                                                ),
+                                                icon: Icon(
+                                                  obscure
+                                                      ? Icons.visibility_off
+                                                      : Icons.visibility,
+                                                ),
+                                              ),
+                                            ),
+                                        validator: (v) =>
+                                            (v == null || v.length < 6)
+                                            ? 'Min. 6 caracteres'
+                                            : null,
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          Checkbox(
+                                            value: termosAceitos,
+                                            activeColor: cs.primary,
+                                            onChanged: (v) => setState(
+                                              () => termosAceitos = v ?? false,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 4),
+                                          const Expanded(
+                                            child: Wrap(
+                                              children: [
+                                                Text('Estou de acordo com os '),
+                                                Text(
+                                                  'Termos de Uso',
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
+                                                ),
+                                                Text(' e '),
+                                                Text(
+                                                  'Política de Privacidade',
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
+                                                ),
+                                                Text('.'),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: cs.primary,
-                                  foregroundColor: Colors.white,
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 14,
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
+
+                            const SizedBox(height: 16),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: OutlinedButton(
+                                    style: OutlinedButton.styleFrom(
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 14,
+                                      ),
+                                      side: BorderSide(
+                                        color: cs.primary,
+                                        width: 1.4,
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                    ),
+                                    onPressed: () => context.go('/login'),
+                                    child: const Text(
+                                      'Cancelar',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
                                   ),
                                 ),
-                                onPressed: () {
-                                  if (formKey.currentState?.validate() ??
-                                      false) {
-                                    context.go('/map');
-                                  }
-                                },
-                                child: const Text(
-                                  'Criar conta',
-                                  style: TextStyle(fontWeight: FontWeight.w700),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: cs.primary,
+                                      foregroundColor: Colors.white,
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 14,
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                    ),
+                                    onPressed: termosAceitos ? _onSubmit : null,
+                                    child: const Text(
+                                      'Criar conta',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                  ),
                                 ),
-                              ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            TextButton(
+                              onPressed: () => context.go('/sign-in'),
+                              child: const Text("Já tem uma conta? Faça login"),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 8),
-                        TextButton(
-                          onPressed: () => context.go('/sign-in'),
-                          child: const Text("Já tem uma conta? Faça login"),
-                        ),
-                      ],
+                      ),
                     ),
                   ),
-                ),
-              ),
-            );
-          },
+                );
+              },
+            ),
+          ),
         ),
-      ),
+
+        if (_loading) const AppLoading(),
+      ],
     );
   }
 }
