@@ -45,7 +45,7 @@ lib/
 ├── shared/
 │   └── widgets/
 │       ├── app_bottom_nav.dart    # Bottom navigation bar reutilizável
-│       ├── app_button.dart        # Botão customizado
+│       ├── app_loading.dart       # Tela de loading customizada
 │       └── search_header.dart     # Header de busca reutilizável
 │
 ├── app.dart                       # Inicialização principal
