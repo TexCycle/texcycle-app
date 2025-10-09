@@ -17,7 +17,7 @@ class _DonorInfoPageState extends State<DonorInfoPage> {
   final kgCtrl = TextEditingController();
   final enderecoCtrl = TextEditingController();
 
-  int _currentIndex = 2;
+  int _currentIndex = 1;
 
   @override
   void dispose() {

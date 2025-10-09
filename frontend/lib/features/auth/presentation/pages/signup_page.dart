@@ -201,29 +201,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                           'Endereço',
                                           icon: Icons.location_on_outlined,
                                         ),
-                                      ),
-                                      const SizedBox(height: 12),
-                                      DropdownButtonFormField<String>(
-                                        value: tipoConta,
-                                        decoration: _dec(
-                                          'Quem sou eu',
-                                          icon: Icons.people_outline,
-                                        ),
-                                        items: const [
-                                          DropdownMenuItem(
-                                            value: 'Doador',
-                                            child: Text('Doador'),
-                                          ),
-                                          DropdownMenuItem(
-                                            value: 'Coletador',
-                                            child: Text('Coletador'),
-                                          ),
-                                        ],
-                                        onChanged: (v) =>
-                                            setState(() => tipoConta = v),
-                                        validator: (v) => v == null
-                                            ? 'Selecione uma opção'
-                                            : null,
+                                    
                                       ),
                                       const SizedBox(height: 12),
                                       TextFormField(

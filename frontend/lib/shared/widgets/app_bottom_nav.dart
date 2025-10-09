@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/core/config/user_session.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/config/app_colors.dart';
 
@@ -10,8 +9,6 @@ class AppBottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final role = UserSession.role; 
-
     return BottomNavigationBar(
       currentIndex: currentIndex,
       onTap: (i) {
@@ -20,16 +17,9 @@ class AppBottomNavBar extends StatelessWidget {
             context.go('/map');
             break;
           case 1:
-            context.go('/services');
+            context.go('/donor-info');
             break;
           case 2:
-            if (role == "coletador") {
-              context.go('/collector');
-            } else {
-              context.go('/donor-info');
-            }
-            break;
-          case 3:
             context.go('/my-account');
             break;
         }
@@ -37,6 +27,8 @@ class AppBottomNavBar extends StatelessWidget {
       type: BottomNavigationBarType.fixed,
       selectedItemColor: AppColors.navy,
       unselectedItemColor: Colors.black54,
+      selectedIconTheme: const IconThemeData(size: 28),
+      unselectedIconTheme: const IconThemeData(size: 24),
       items: const [
         BottomNavigationBarItem(
           icon: Padding(
@@ -49,15 +41,9 @@ class AppBottomNavBar extends StatelessWidget {
         BottomNavigationBarItem(
           icon: Padding(
             padding: EdgeInsets.only(top: 8),
-            child: Icon(Icons.grid_view_outlined),
-          ),
-          label: 'Serviços',
-        ),
-        BottomNavigationBarItem(
-          icon: Padding(
-            padding: EdgeInsets.only(top: 8),
             child: Icon(Icons.receipt_long_outlined),
           ),
+          activeIcon: Icon(Icons.receipt_long),
           label: 'Atividades',
         ),
         BottomNavigationBarItem(
@@ -65,6 +51,7 @@ class AppBottomNavBar extends StatelessWidget {
             padding: EdgeInsets.only(top: 8),
             child: Icon(Icons.person_outline),
           ),
+          activeIcon: Icon(Icons.person),
           label: 'Conta',
         ),
       ],

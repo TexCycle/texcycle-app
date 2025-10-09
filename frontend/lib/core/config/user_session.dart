@@ -1,3 +1,3 @@
 class UserSession {
-  static String role = "coletador"; // ou "doador"
+  static String role = "doador";
 }

@@ -11,7 +11,7 @@ class AccountPage extends StatefulWidget {
 }
 
 class _AccountPageState extends State<AccountPage> {
-  int _currentIndex = 3;
+  int _currentIndex = 2;
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +52,7 @@ class _AccountPageState extends State<AccountPage> {
                   ),
                   const SizedBox(height: 4),
                   const Text(
-                    "Doador",
+                    "Fornecedor de Resíduos",
                     style: TextStyle(color: Colors.white70, fontSize: 14),
                   ),
                   const SizedBox(height: 16),
