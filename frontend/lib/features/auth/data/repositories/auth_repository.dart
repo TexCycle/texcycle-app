@@ -57,7 +57,7 @@ class AuthRepository {
         ApiConfig.signIn,
         data: {
           'email': email,
-          'senha': senha,
+          'password': senha,  
         },
       );
 
