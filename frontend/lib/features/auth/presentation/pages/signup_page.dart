@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../../core/config/app_colors.dart';
-import '../../../../../shared/widgets/app_loading.dart'; 
+import '../../../../core/config/app_colors.dart';
+import '../../../../shared/widgets/app_loading.dart';
+import '../../data/models/user_model.dart';
+import '../../data/repositories/auth_repository.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -19,9 +21,11 @@ class _SignUpPageState extends State<SignUpPage> {
   final senhaCtrl = TextEditingController();
 
   final formKey = GlobalKey<FormState>();
+  final _authRepository = AuthRepository();
+  
   bool termosAceitos = false;
   bool obscure = true;
-  bool _loading = false; 
+  bool _loading = false;
 
   String? tipoConta;
 
@@ -43,16 +47,78 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
+  void _showError(String message) {
+    if (!mounted) return;
+    
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red.shade700,
+        behavior: SnackBarBehavior.floating,
+        duration: const Duration(seconds: 4),
+      ),
+    );
+  }
+
+  void _showSuccess(String message) {
+    if (!mounted) return;
+    
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.green.shade700,
+        behavior: SnackBarBehavior.floating,
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
+
   Future<void> _onSubmit() async {
     if (!(formKey.currentState?.validate() ?? false)) return;
 
+    if (!termosAceitos) {
+      _showError('Você precisa aceitar os Termos de Uso');
+      return;
+    }
+
     setState(() => _loading = true);
 
-    await Future.delayed(const Duration(seconds: 2));
+    try {
+      final request = SignUpRequest(
+        nome: nomeCtrl.text.trim(),
+        cpf: cpfCtrl.text.trim().isEmpty ? null : cpfCtrl.text.trim(),
+        email: emailCtrl.text.trim(),
+        telefone: telCtrl.text.trim().isEmpty ? null : telCtrl.text.trim(),
+        endereco: enderecoCtrl.text.trim().isEmpty ? null : enderecoCtrl.text.trim(),
+        password: senhaCtrl.text,
+        tipoConta: "doador",
+      );
 
-    if (mounted) {
-      setState(() => _loading = false);
-      context.go('/map');
+      final response = await _authRepository.signUp(request);
+
+      if (mounted) {
+        // Salvar token e dados do usuário 
+        // await SharedPreferences.getInstance().then((prefs) {
+        //   prefs.setString('token', response.token);
+        //   prefs.setString('user_id', response.user.id);
+        // });
+
+        _showSuccess('Conta criada com sucesso!');
+        
+        await Future.delayed(const Duration(milliseconds: 500));
+        
+        if (mounted) {
+          context.go('/map');
+        }
+      }
+    } on ApiException catch (e) {
+      _showError(e.message);
+    } catch (e) {
+      _showError('Erro ao criar conta: $e');
+    } finally {
+      if (mounted) {
+        setState(() => _loading = false);
+      }
     }
   }
 
@@ -130,7 +196,6 @@ class _SignUpPageState extends State<SignUpPage> {
                               ),
                             ),
                             const SizedBox(height: 16),
-
                             Card(
                               elevation: 2,
                               shape: RoundedRectangleBorder(
@@ -155,8 +220,8 @@ class _SignUpPageState extends State<SignUpPage> {
                                         ),
                                         validator: (v) =>
                                             (v == null || v.trim().isEmpty)
-                                            ? 'Obrigatório'
-                                            : null,
+                                                ? 'Obrigatório'
+                                                : null,
                                       ),
                                       const SizedBox(height: 12),
                                       TextFormField(
@@ -177,8 +242,9 @@ class _SignUpPageState extends State<SignUpPage> {
                                           icon: Icons.alternate_email,
                                         ),
                                         validator: (v) {
-                                          if (v == null || v.isEmpty)
+                                          if (v == null || v.isEmpty) {
                                             return 'Obrigatório';
+                                          }
                                           final ok = RegExp(
                                             r'^[^@]+@[^@]+\.[^@]+',
                                           ).hasMatch(v);
@@ -201,32 +267,30 @@ class _SignUpPageState extends State<SignUpPage> {
                                           'Endereço',
                                           icon: Icons.location_on_outlined,
                                         ),
-                                    
                                       ),
                                       const SizedBox(height: 12),
                                       TextFormField(
                                         controller: senhaCtrl,
                                         obscureText: obscure,
-                                        decoration:
-                                            _dec(
-                                              'Senha',
-                                              icon: Icons.lock_outline,
-                                            ).copyWith(
-                                              suffixIcon: IconButton(
-                                                onPressed: () => setState(
-                                                  () => obscure = !obscure,
-                                                ),
-                                                icon: Icon(
-                                                  obscure
-                                                      ? Icons.visibility_off
-                                                      : Icons.visibility,
-                                                ),
-                                              ),
+                                        decoration: _dec(
+                                          'Senha',
+                                          icon: Icons.lock_outline,
+                                        ).copyWith(
+                                          suffixIcon: IconButton(
+                                            onPressed: () => setState(
+                                              () => obscure = !obscure,
                                             ),
+                                            icon: Icon(
+                                              obscure
+                                                  ? Icons.visibility_off
+                                                  : Icons.visibility,
+                                            ),
+                                          ),
+                                        ),
                                         validator: (v) =>
                                             (v == null || v.length < 6)
-                                            ? 'Min. 6 caracteres'
-                                            : null,
+                                                ? 'Min. 6 caracteres'
+                                                : null,
                                       ),
                                       const SizedBox(height: 8),
                                       Row(
@@ -269,7 +333,6 @@ class _SignUpPageState extends State<SignUpPage> {
                                 ),
                               ),
                             ),
-
                             const SizedBox(height: 16),
                             Row(
                               children: [
@@ -335,7 +398,6 @@ class _SignUpPageState extends State<SignUpPage> {
             ),
           ),
         ),
-
         if (_loading) const AppLoading(),
       ],
     );

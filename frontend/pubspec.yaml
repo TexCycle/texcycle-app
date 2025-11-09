@@ -33,6 +33,9 @@ dependencies:
   go_router: ^14.2.0
   flutter_map: ^7.0.0
   latlong2: ^0.9.0
+  http: ^1.2.0
+  shared_preferences: ^2.2.2
+  dio: ^5.4.0
   geolocator: ^12.0.0
 
   # The following adds the Cupertino Icons font to your application.
