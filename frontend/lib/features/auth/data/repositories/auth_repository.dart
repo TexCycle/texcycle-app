@@ -42,7 +42,7 @@ class AuthRepository {
           e.type == DioExceptionType.receiveTimeout) {
         throw ApiException('Tempo de conexão esgotado. Verifique sua internet.');
       } else if (e.type == DioExceptionType.connectionError) {
-        throw ApiException('Não foi possível conectar ao servidor. Verifique se a API está rodando.');
+        throw ApiException('Não foi possível conectar ao servidor. Verifique se a API está rodando em ${ApiConfig.baseUrl}');
       } else {
         throw ApiException('Erro de conexão: ${e.message}');
       }

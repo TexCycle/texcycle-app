@@ -8,9 +8,11 @@ class ApiClient {
   factory ApiClient() => _instance;
   
   ApiClient._internal() {
+    final baseUrl = ApiConfig.baseUrl;
+    
     _dio = Dio(
       BaseOptions(
-        baseUrl: ApiConfig.baseUrl,
+        baseUrl: baseUrl,
         connectTimeout: ApiConfig.timeout,
         receiveTimeout: ApiConfig.timeout,
         headers: {
@@ -34,6 +36,10 @@ class ApiClient {
         onError: (error, handler) {
           print('ERROR[${error.response?.statusCode}] => ${error.requestOptions.uri}');
           print('Message: ${error.message}');
+          print('Error Type: ${error.type}');
+          if (error.type == DioExceptionType.connectionError) {
+            print('Verifique se a API está rodando em: $baseUrl');
+          }
           return handler.next(error);
         },
       ),

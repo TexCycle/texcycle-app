@@ -1,5 +1,7 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:http/http.dart' as http;
 import '../../../../core/config/app_colors.dart';
 import '../../../../shared/widgets/app_loading.dart';
 import '../../data/models/user_model.dart';
@@ -17,7 +19,13 @@ class _SignUpPageState extends State<SignUpPage> {
   final cpfCtrl = TextEditingController();
   final emailCtrl = TextEditingController();
   final telCtrl = TextEditingController();
-  final enderecoCtrl = TextEditingController();
+  final cepCtrl = TextEditingController();
+  final logradouroCtrl = TextEditingController();
+  final bairroCtrl = TextEditingController();
+  final localidadeCtrl = TextEditingController();
+  final ufCtrl = TextEditingController();
+  final numeroCtrl = TextEditingController();
+  final complementoCtrl = TextEditingController();
   final senhaCtrl = TextEditingController();
 
   final formKey = GlobalKey<FormState>();
@@ -26,6 +34,7 @@ class _SignUpPageState extends State<SignUpPage> {
   bool termosAceitos = false;
   bool obscure = true;
   bool _loading = false;
+  bool _buscandoCep = false;
 
   String? tipoConta;
 
@@ -35,7 +44,13 @@ class _SignUpPageState extends State<SignUpPage> {
     cpfCtrl.dispose();
     emailCtrl.dispose();
     telCtrl.dispose();
-    enderecoCtrl.dispose();
+    cepCtrl.dispose();
+    logradouroCtrl.dispose();
+    bairroCtrl.dispose();
+    localidadeCtrl.dispose();
+    ufCtrl.dispose();
+    numeroCtrl.dispose();
+    complementoCtrl.dispose();
     senhaCtrl.dispose();
     super.dispose();
   }
@@ -73,6 +88,147 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
+  Future<void> _buscarCep(String cep) async {
+    final digits = cep.replaceAll(RegExp(r'[^\d]'), '');
+    if (digits.length != 8) return;
+
+    setState(() => _buscandoCep = true);
+
+    try {
+      final response = await http.get(
+        Uri.parse('https://viacep.com.br/ws/$digits/json/'),
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        
+        if (data['erro'] == true) {
+          if (mounted) {
+            _showError('CEP não encontrado');
+          }
+          return;
+        }
+
+        if (mounted) {
+          setState(() {
+            logradouroCtrl.text = data['logradouro'] ?? '';
+            bairroCtrl.text = data['bairro'] ?? '';
+            localidadeCtrl.text = data['localidade'] ?? '';
+            ufCtrl.text = data['uf'] ?? '';
+          });
+        }
+      } else {
+        if (mounted) {
+          _showError('Erro ao buscar CEP');
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        _showError('Erro ao buscar CEP: $e');
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _buscandoCep = false);
+      }
+    }
+  }
+
+  String _montarEndereco() {
+    final parts = <String>[];
+    
+    // logradouro + número
+    final logradouro = logradouroCtrl.text.trim();
+    final numero = numeroCtrl.text.trim();
+    if (logradouro.isNotEmpty) {
+      if (numero.isNotEmpty) {
+        parts.add('$logradouro, $numero');
+      } else {
+        parts.add(logradouro);
+      }
+    }
+    
+    // complemento (se houver)
+    final complemento = complementoCtrl.text.trim();
+    if (complemento.isNotEmpty) {
+      parts.add(complemento);
+    }
+    
+    // bairro
+    final bairro = bairroCtrl.text.trim();
+    if (bairro.isNotEmpty) {
+      parts.add(bairro);
+    }
+    
+    // localidade - uf
+    final localidade = localidadeCtrl.text.trim();
+    final uf = ufCtrl.text.trim();
+    if (localidade.isNotEmpty && uf.isNotEmpty) {
+      parts.add('$localidade - $uf');
+    } else if (localidade.isNotEmpty) {
+      parts.add(localidade);
+    }
+    
+    // cep
+    final cep = cepCtrl.text.trim();
+    if (cep.isNotEmpty) {
+      parts.add('CEP: $cep');
+    }
+    
+    return parts.join(', ');
+  }
+
+  bool _isValidCPF(String cpf) {
+    final digits = cpf.replaceAll(RegExp(r'[^\d]'), '');
+    if (digits.length != 11) return false;
+    
+    if (RegExp(r'^(\d)\1{10}$').hasMatch(digits)) return false;
+    
+    int sum = 0;
+    for (int i = 0; i < 9; i++) {
+      sum += int.parse(digits[i]) * (10 - i);
+    }
+    int digit1 = (sum * 10) % 11;
+    if (digit1 == 10) digit1 = 0;
+    if (digit1 != int.parse(digits[9])) return false;
+    
+    sum = 0;
+    for (int i = 0; i < 10; i++) {
+      sum += int.parse(digits[i]) * (11 - i);
+    }
+    int digit2 = (sum * 10) % 11;
+    if (digit2 == 10) digit2 = 0;
+    if (digit2 != int.parse(digits[10])) return false;
+    
+    return true;
+  }
+
+  bool _isValidCNPJ(String cnpj) {
+    final digits = cnpj.replaceAll(RegExp(r'[^\d]'), '');
+    if (digits.length != 14) return false;
+    
+    if (RegExp(r'^(\d)\1{13}$').hasMatch(digits)) return false;
+    
+    final weights1 = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+    int sum = 0;
+    for (int i = 0; i < 12; i++) {
+      sum += int.parse(digits[i]) * weights1[i];
+    }
+    int digit1 = sum % 11;
+    digit1 = digit1 < 2 ? 0 : 11 - digit1;
+    if (digit1 != int.parse(digits[12])) return false;
+    
+    final weights2 = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+    sum = 0;
+    for (int i = 0; i < 13; i++) {
+      sum += int.parse(digits[i]) * weights2[i];
+    }
+    int digit2 = sum % 11;
+    digit2 = digit2 < 2 ? 0 : 11 - digit2;
+    if (digit2 != int.parse(digits[13])) return false;
+    
+    return true;
+  }
+
   Future<void> _onSubmit() async {
     if (!(formKey.currentState?.validate() ?? false)) return;
 
@@ -84,12 +240,14 @@ class _SignUpPageState extends State<SignUpPage> {
     setState(() => _loading = true);
 
     try {
+      final enderecoCompleto = _montarEndereco();
+      
       final request = SignUpRequest(
         nome: nomeCtrl.text.trim(),
-        cpf: cpfCtrl.text.trim().isEmpty ? null : cpfCtrl.text.trim(),
+        cpf: cpfCtrl.text.trim(),
         email: emailCtrl.text.trim(),
-        telefone: telCtrl.text.trim().isEmpty ? null : telCtrl.text.trim(),
-        endereco: enderecoCtrl.text.trim().isEmpty ? null : enderecoCtrl.text.trim(),
+        telefone: telCtrl.text.trim(),
+        endereco: enderecoCompleto.isEmpty ? null : enderecoCompleto,
         password: senhaCtrl.text,
         tipoConta: "doador",
       );
@@ -231,6 +389,26 @@ class _SignUpPageState extends State<SignUpPage> {
                                           'CPF/CNPJ',
                                           icon: Icons.credit_card_outlined,
                                         ),
+                                        validator: (v) {
+                                          if (v == null || v.trim().isEmpty) {
+                                            return 'Obrigatório';
+                                          }
+                                          final value = v.trim();
+                                          final digits = value.replaceAll(RegExp(r'[^\d]'), '');
+                                          
+                                          if (digits.length == 11) {
+                                            if (!_isValidCPF(value)) {
+                                              return 'CPF inválido';
+                                            }
+                                          } else if (digits.length == 14) {
+                                            if (!_isValidCNPJ(value)) {
+                                              return 'CNPJ inválido';
+                                            }
+                                          } else {
+                                            return 'CPF deve ter 11 dígitos ou CNPJ deve ter 14 dígitos';
+                                          }
+                                          return null;
+                                        },
                                       ),
                                       const SizedBox(height: 12),
                                       TextFormField(
@@ -242,13 +420,22 @@ class _SignUpPageState extends State<SignUpPage> {
                                           icon: Icons.alternate_email,
                                         ),
                                         validator: (v) {
-                                          if (v == null || v.isEmpty) {
+                                          if (v == null || v.trim().isEmpty) {
                                             return 'Obrigatório';
                                           }
-                                          final ok = RegExp(
-                                            r'^[^@]+@[^@]+\.[^@]+',
-                                          ).hasMatch(v);
-                                          return ok ? null : 'E-mail inválido';
+                                          final email = v.trim();
+                                          // verifica se tem @
+                                          if (!email.contains('@')) {
+                                            return 'E-mail deve conter @';
+                                          }
+                                          // verifica formato básico: texto@texto.texto
+                                          final emailRegex = RegExp(
+                                            r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
+                                          );
+                                          if (!emailRegex.hasMatch(email)) {
+                                            return 'E-mail inválido';
+                                          }
+                                          return null;
                                         },
                                       ),
                                       const SizedBox(height: 12),
@@ -259,14 +446,139 @@ class _SignUpPageState extends State<SignUpPage> {
                                           'Celular',
                                           icon: Icons.phone_outlined,
                                         ),
+                                        validator: (v) {
+                                          if (v == null || v.trim().isEmpty) {
+                                            return 'Obrigatório';
+                                          }
+                                          final digits = v.replaceAll(RegExp(r'[^\d]'), '');
+                                          if (digits.length == 10 && digits[2] == '9') {
+                                            return 'Celular incompleto (falta um dígito)';
+                                          }
+                                          if (digits.length == 11 && digits[2] != '9') {
+                                            return 'Telefone inválido';
+                                          }
+                                          return null;
+                                        },
                                       ),
                                       const SizedBox(height: 12),
                                       TextFormField(
-                                        controller: enderecoCtrl,
+                                        controller: cepCtrl,
+                                        keyboardType: TextInputType.number,
                                         decoration: _dec(
-                                          'Endereço',
-                                          icon: Icons.location_on_outlined,
+                                          'CEP',
+                                          icon: Icons.pin_drop_outlined,
+                                        ).copyWith(
+                                          suffixIcon: _buscandoCep
+                                              ? const SizedBox(
+                                                  width: 20,
+                                                  height: 20,
+                                                  child: Padding(
+                                                    padding: EdgeInsets.all(12),
+                                                    child: CircularProgressIndicator(
+                                                      strokeWidth: 2,
+                                                    ),
+                                                  ),
+                                                )
+                                              : IconButton(
+                                                  icon: const Icon(Icons.search),
+                                                  onPressed: () {
+                                                    if (cepCtrl.text.isNotEmpty) {
+                                                      _buscarCep(cepCtrl.text);
+                                                    }
+                                                  },
+                                                ),
                                         ),
+                                        validator: (v) {
+                                          if (v == null || v.trim().isEmpty) {
+                                            return 'Obrigatório';
+                                          }
+                                          final cep = v.replaceAll(RegExp(r'[^\d]'), '');
+                                          if (cep.length != 8) {
+                                            return 'CEP deve ter 8 dígitos';
+                                          }
+                                          return null;
+                                        },
+                                        onChanged: (value) {
+                                          final digits = value.replaceAll(RegExp(r'[^\d]'), '');
+                                          if (digits.length == 8) {
+                                            _buscarCep(digits);
+                                          }
+                                        },
+                                      ),
+                                      const SizedBox(height: 12),
+                                      TextFormField(
+                                        controller: logradouroCtrl,
+                                        decoration: _dec(
+                                          'Logradouro',
+                                          icon: Icons.streetview_outlined,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 12),
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            flex: 2,
+                                            child: TextFormField(
+                                              controller: numeroCtrl,
+                                              keyboardType: TextInputType.number,
+                                              decoration: _dec(
+                                                'Número',
+                                                icon: Icons.numbers_outlined,
+                                              ),
+                                              validator: (v) {
+                                                if (v == null || v.trim().isEmpty) {
+                                                  return 'Obrigatório';
+                                                }
+                                                return null;
+                                              },
+                                            ),
+                                          ),
+                                          const SizedBox(width: 12),
+                                          Expanded(
+                                            flex: 3,
+                                            child: TextFormField(
+                                              controller: complementoCtrl,
+                                              decoration: _dec(
+                                                'Complemento',
+                                                icon: Icons.home_outlined,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 12),
+                                      TextFormField(
+                                        controller: bairroCtrl,
+                                        decoration: _dec(
+                                          'Bairro',
+                                          icon: Icons.location_city_outlined,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 12),
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            flex: 3,
+                                            child: TextFormField(
+                                              controller: localidadeCtrl,
+                                              decoration: _dec(
+                                                'Cidade',
+                                                icon: Icons.apartment_outlined,
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(width: 12),
+                                          SizedBox(
+                                            width: 120,
+                                            child: TextFormField(
+                                              controller: ufCtrl,
+                                              decoration: _dec(
+                                                'UF',
+                                                icon: Icons.flag_outlined,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                       const SizedBox(height: 12),
                                       TextFormField(
