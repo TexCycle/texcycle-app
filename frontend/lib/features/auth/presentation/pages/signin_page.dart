@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/config/app_colors.dart';
+import '../../../../core/services/auth_service.dart';
 import '../../../../shared/widgets/app_loading.dart';
 import '../../data/repositories/auth_repository.dart';
 
@@ -17,6 +18,7 @@ class _SignInPageState extends State<SignInPage> {
 
   final formKey = GlobalKey<FormState>();
   final _authRepository = AuthRepository();
+  final _authService = AuthService();
   
   bool obscure = true;
   bool _loading = false;
@@ -73,20 +75,18 @@ class _SignInPageState extends State<SignInPage> {
       );
 
       if (mounted) {
-        // await SharedPreferences.getInstance().then((prefs) {
-        //   prefs.setString('token', response.token);
-        //   prefs.setString('user_id', response.user.id);
-        //   prefs.setString('user_name', response.user.nome);
-        //   prefs.setString('user_email', response.user.email);
-        //   prefs.setString('tipo_perfil', response.user.tipoConta ?? '');
-        // });
+        // Salvar dados do usuário usando AuthService
+        await _authService.saveAuthData(
+          token: response.token,
+          user: response.user,
+        );
 
         _showSuccess('Login realizado com sucesso!');
         
         await Future.delayed(const Duration(milliseconds: 500));
         
         if (mounted) {
-          context.go('/map');
+          context.go('/my-account');
         }
       }
     } on ApiException catch (e) {

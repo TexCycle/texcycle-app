@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
 import '../../../../core/config/app_colors.dart';
@@ -244,7 +245,7 @@ class _SignUpPageState extends State<SignUpPage> {
       
       final request = SignUpRequest(
         nome: nomeCtrl.text.trim(),
-        cpf: cpfCtrl.text.trim(),
+        cpf: cpfCtrl.text.trim().isNotEmpty ? cpfCtrl.text.trim() : null,
         email: emailCtrl.text.trim(),
         telefone: telCtrl.text.trim(),
         endereco: enderecoCompleto.isEmpty ? null : enderecoCompleto,
@@ -252,7 +253,7 @@ class _SignUpPageState extends State<SignUpPage> {
         tipoConta: "doador",
       );
 
-      final response = await _authRepository.signUp(request);
+      await _authRepository.signUp(request);
 
       if (mounted) {
         // Salvar token e dados do usuário 
@@ -266,7 +267,7 @@ class _SignUpPageState extends State<SignUpPage> {
         await Future.delayed(const Duration(milliseconds: 500));
         
         if (mounted) {
-          context.go('/map');
+          context.go('/sign-in');
         }
       }
     } on ApiException catch (e) {

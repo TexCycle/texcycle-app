@@ -23,7 +23,7 @@ class UserModel {
     return UserModel(
       id: json['id']?.toString() ?? '',
       nome: json['nome'] ?? '',
-      cpf: json['cpf'],
+      cpf: json['cnpj'] ?? json['cpf'], // API retorna 'cnpj', mas mantém compatibilidade com 'cpf'
       email: json['email'] ?? '',
       telefone: json['telefone'],
       endereco: json['endereco'],
@@ -87,7 +87,7 @@ class SignUpRequest {
   Map<String, dynamic> toJson() {
     return {
       'nome': nome,
-      if (cpf != null && cpf!.isNotEmpty) 'cpf': cpf,
+      if (cpf != null && cpf!.isNotEmpty) 'cnpj': cpf,
       'email': email,
       if (telefone != null && telefone!.isNotEmpty) 'telefone': telefone,
       if (endereco != null && endereco!.isNotEmpty) 'endereco': endereco,

@@ -6,6 +6,9 @@ class AuthService {
   static const _userIdKey = 'user_id';
   static const _userNameKey = 'user_name';
   static const _userEmailKey = 'user_email';
+  static const _userCpfKey = 'user_cpf';
+  static const _userTelefoneKey = 'user_telefone';
+  static const _userEnderecoKey = 'user_endereco';
   static const _tipoPerfilKey = 'tipo_perfil';
 
   Future<void> saveAuthData({
@@ -17,6 +20,15 @@ class AuthService {
     await prefs.setString(_userIdKey, user.id);
     await prefs.setString(_userNameKey, user.nome);
     await prefs.setString(_userEmailKey, user.email);
+    if (user.cpf != null) {
+      await prefs.setString(_userCpfKey, user.cpf!);
+    }
+    if (user.telefone != null) {
+      await prefs.setString(_userTelefoneKey, user.telefone!);
+    }
+    if (user.endereco != null) {
+      await prefs.setString(_userEnderecoKey, user.endereco!);
+    }
     if (user.tipoConta != null) {
       await prefs.setString(_tipoPerfilKey, user.tipoConta!);
     }
@@ -38,6 +50,9 @@ class AuthService {
       'id': prefs.getString(_userIdKey),
       'nome': prefs.getString(_userNameKey),
       'email': prefs.getString(_userEmailKey),
+      'cpf': prefs.getString(_userCpfKey),
+      'telefone': prefs.getString(_userTelefoneKey),
+      'endereco': prefs.getString(_userEnderecoKey),
       'tipoPerfil': prefs.getString(_tipoPerfilKey),
     };
   }
