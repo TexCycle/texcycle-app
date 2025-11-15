@@ -86,7 +86,7 @@ class _SignInPageState extends State<SignInPage> {
         await Future.delayed(const Duration(milliseconds: 500));
         
         if (mounted) {
-          context.go('/my-account');
+          context.go('/map');
         }
       }
     } on ApiException catch (e) {
